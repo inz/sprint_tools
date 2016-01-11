@@ -131,7 +131,7 @@ command :list do |c|
       end
 
       boards.each do |board|
-        puts "\nBoard Name: #{board.name}"
+        puts "\nBoard Name: #{board.name} (#{board.id})"
         lists = trello.board_lists(board)
         if options.list
           lists = []
