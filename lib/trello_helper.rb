@@ -372,10 +372,19 @@ class TrelloHelper
   def create_checklist(card, checklist_name)
     cl = checklist(card, checklist_name)
     unless cl
-      puts "Adding #{checklist_name} to #{card.name}"
-      cl = Trello::Checklist.create({:name => checklist_name, :board_id => card.board_id, :card_id => card.id})
-      #card.add_checklist(cl)
-      @checklists_by_card.delete(card.id)
+      retries = 1
+      begin
+        puts "Adding #{checklist_name} to #{card.name}"
+        cl = Trello::Checklist.create({:name => checklist_name, :board_id => card.board_id, :card_id => card.id})
+        #card.add_checklist(cl)
+        @checklists_by_card.delete(card.id)
+      rescue Trello::Error => e
+        if retries > 0
+          card.board.add_member(bot_user)
+          retries -= 1
+          retry
+        end
+      end
     end
     cl
   end
@@ -560,6 +569,10 @@ class TrelloHelper
 
   def member(member_name)
     Trello::Member.find(member_name)
+  end
+  
+  def bot_user
+    @bot_user ||= member('me')
   end
 
   def member_emails(members)

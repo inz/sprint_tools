@@ -455,6 +455,7 @@ command :sync_labels do |c|
                   trello.create_label(label_name, label_color, board.id)
                   created = true
                 rescue => e
+                  board.add_member(trello.bot_user)
                   board_labels = trello.target(trello.board_labels(board))
                   created = board_labels.map{|l| l.name }.include?(label_name)
                   unless created
