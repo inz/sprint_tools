@@ -1,8 +1,10 @@
 
-OpenShift Sprint Tools
+Cloud Stove Sprint Tools
 ===
 
-[![TravisCI](https://travis-ci.org/openshift/sprint_tools.svg?branch=master)](https://travis-ci.org/openshift/sprint_tools)
+[![TravisCI](https://travis-ci.org/inz/sprint_tools.svg?branch=master)](https://travis-ci.org/inz/sprint_tools)
+
+(forked from [OpenShift Sprint Tools](https://github.com/openshift/sprint_tools))
 
 Setup
 ===
@@ -178,6 +180,10 @@ Commands
         --update-roadmap
             Update the roadmap board with progress from teams.  Note: Existing checklist items will be removed with matching [tag]s.
 
+**create_labels**
+
+    DESCRIPTION:
+        Create epic- labels from [] markers on roadmap cards
 
 **sync_labels**
 
