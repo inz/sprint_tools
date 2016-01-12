@@ -4,6 +4,7 @@ require 'kramdown'
 class TrelloHelper
   # Trello Config
   attr_accessor :consumer_key, :consumer_secret, :oauth_token, :oauth_token_secret, :teams,
+                :developer_public_key, :member_token,
                 :documentation_id, :organization_id, :roadmap_board, :roadmap_id,
                 :public_roadmap_id, :public_roadmap_board, :documentation_board,
                 :documentation_next_list, :docs_planning_id, :organization_name,
@@ -94,10 +95,12 @@ class TrelloHelper
     end
 
     Trello.configure do |config|
-      config.consumer_key = @consumer_key
-      config.consumer_secret = @consumer_secret
-      config.oauth_token = @oauth_token
-      config.oauth_token_secret = @oauth_token_secret
+      # config.consumer_key = @consumer_key
+      # config.consumer_secret = @consumer_secret
+      # config.oauth_token = @oauth_token
+      # config.oauth_token_secret = @oauth_token_secret
+      config.developer_public_key = @developer_public_key
+      config.member_token = @member_token
     end
 
     @cards_by_list = {}
