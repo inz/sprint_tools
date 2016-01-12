@@ -204,6 +204,8 @@ command :list_invalid_users do |c|
 
   c.description = "List the potentially invalid users"
   c.action do |args, options|
+    puts 'not implemented'
+    exit 1
     require 'ldap_helper'
     ldap = load_conf(LdapHelper, CONFIG.ldap, true)
     puts "Potential Invalid Organization Users:"
