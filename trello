@@ -525,6 +525,68 @@ command :rename_label do |c|
   end
 end
 
+def hash_by_name(array)
+  array.inject({}) { |result, e| result[e.name] = e; result }
+end
+
+command :create_labels do |c|
+  c.syntax = "#{name} create_labels"
+  c.description = "Create epic- labels from [] markers on roadmap cards"
+  c.action do |args, options|
+    boards = trello.roadmap_boards
+    boards.each do |board|
+      puts "Board Name: #{board.name}"
+      board_labels = trello.target(trello.board_labels(board))
+      board_labels_by_name = hash_by_name(board_labels)
+      lists = trello.board_lists(board)
+      lists.each do |list|
+        next unless list.name == 'Epic Backlog'
+        cards = trello.list_cards(list)
+        next if cards.empty?
+        puts "List: #{list.name} (#cards: #{cards.length})"
+        cards.each_with_index do |card, index|
+          card_name = card.name
+          card_tags = card_name.scan(/\[[^\]]+\]/)
+          card_tags.each do |card_tag|
+            if card_tag == TrelloHelper::FUTURE_TAG
+              epic_label_name = TrelloHelper::FUTURE_LABEL
+            else
+              epic_label_name = "epic-#{card_tag[1..-2]}"
+            end
+            unless board_labels_by_name.has_key?(epic_label_name)
+              puts "Creating label #{epic_label_name}"
+              label_color = '' # No color for epic labels
+              created = false
+              create_retry_count = 0
+              while !created
+                begin
+                  trello.create_label(epic_label_name, label_color, board.id)
+                  created = true
+                rescue => e
+                  board_labels = trello.target(trello.board_labels(board))
+                  created = board_labels.map{|l| l.name }.include?(epic_label_name)
+                  unless created
+                    $stderr.puts "Error creating label: #{e.message}"
+                    raise if create_retry_count >= TrelloHelper::DEFAULT_RETRIES
+                  end
+                end
+                create_retry_count += 1
+              end
+            end
+            board_labels = trello.target(trello.board_labels(board))
+            board_labels_by_name = hash_by_name(board_labels)
+            unless trello.card_labels(card).map{|c| c.name }.include?(epic_label_name)
+              epic_label = board_labels_by_name[epic_label_name]
+              puts "Adding #{epic_label.name} to #{card.name} (#{card.url})"
+              card.add_label(epic_label)
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 command :convert_markers_to_labels do |c|
   c.syntax = "#{name} sync_labels"
 
