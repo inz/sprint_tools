@@ -38,4 +38,4 @@ RUN apk --update add $BUILD_PACKAGAGES $RUNTIME_PACKAGES \
 # Add app
 ADD . /usr/src/app
 
-ENTRYPOINT [ "bundle", "exec", "./trello" ]
+ENTRYPOINT [ "runall.sh" ]
