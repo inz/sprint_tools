@@ -15,6 +15,14 @@ require 'commander/import'
 
 Encoding.default_external = "UTF-8"
 
+# Merge worker config
+ARGV.each_with_index do |arg, i|
+  if arg == "-config"
+    config_file = ARGV[i+1]
+    system("cp #{config_file} config/trello.yml")
+  end
+end
+
 name="#{__FILE__}"
 
 program :name, "Trello Utilities"
